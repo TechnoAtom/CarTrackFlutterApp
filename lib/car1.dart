@@ -15,18 +15,32 @@ class Car1 extends StatefulWidget {
 
 class _Car1State extends State<Car1> {
   Completer<GoogleMapController> _controller = Completer();
-  late CameraPosition firstLocation; // `late` anahtar kelimesi ile tanımla
+  late CameraPosition firstLocation;
+  Set<Marker> _markers = {}; // Marker'ları tutacak set
 
   @override
   void initState() {
     super.initState();
-    // Gidilecek konumun başlangıçta belirlenmesi
     firstLocation = CameraPosition(
-      target: LatLng(
-          widget.enlem,
-          widget
-              .boylam), // widget ile enlem ve boylam değerlerini kullanarak başlangıç konumunu ayarla
+      target: LatLng(widget.enlem, widget.boylam),
       zoom: 18.25,
+    );
+
+    // initState içinde marker'ı ekleyin
+    _markers.add(
+      Marker(
+        // Marker için benzersiz bir id verin
+        markerId: MarkerId('car_location'),
+        // Marker'ın konumunu belirleyin
+        position: LatLng(widget.enlem, widget.boylam),
+        infoWindow: InfoWindow(
+          // Marker'a tıklanınca gösterilecek başlık ve açıklama
+          title: 'Araç Konumu',
+          snippet: 'Burada aracınız bulunuyor.',
+        ),
+        icon: BitmapDescriptor
+            .defaultMarker, // Opsiyonel: Marker ikonunu değiştirebilirsiniz
+      ),
     );
   }
 
@@ -47,16 +61,15 @@ class _Car1State extends State<Car1> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(
-              width: 300,
-              height: 300,
+              width: 500,
+              height: 600,
               child: GoogleMap(
-                initialCameraPosition:
-                    firstLocation, // Burada firstLocation'ı kullanıyoruz.
+                initialCameraPosition: firstLocation,
                 mapType: MapType.normal,
+                markers: _markers, // Marker setini GoogleMap widget'ına ekleyin
                 onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(
-                      controller); // Controller'ı _controller'a tamamlayarak kaydediyoruz.
-                  goLocation(); // Harita oluşturulduğunda konuma git.
+                  _controller.complete(controller);
+                  goLocation();
                 },
               ),
             ),

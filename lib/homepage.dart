@@ -18,6 +18,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double enlem = 60.2151778;
   double boylam = 28.3582383;
+  int hiz = 0;
+  int ident = 352016700333305;
 
   Future<void> getLocation() async {
     var konum = await Geolocator.getCurrentPosition(
@@ -33,7 +35,8 @@ class _HomePageState extends State<HomePage> {
       // JSON'dan enlem ve boylamı al (JSON yapınıza göre değişiklik gösterebilir)
       var latitude = jsonData['position.latitude'];
       var longitude = jsonData['position.longitude'];
-
+      var hiz = jsonData['position.speed'];
+      var ident = jsonData['ident'];
       setState(() {
         // Alınan konumu ve API'den gelen enlem ve boylamı değişkenlere ata
         enlem = latitude;
@@ -52,7 +55,7 @@ class _HomePageState extends State<HomePage> {
         title: Text("Araç Takip"),
         backgroundColor: Colors.pink.shade300,
       ),
-      body: Center(
+      body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -67,10 +70,34 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               child: Card(
-                child: ListTile(
-                  leading: Icon(Icons.directions_car),
-                  title: Text('Araç 1'),
-                  subtitle: Text('Açıklama 1'),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: <Widget>[
+                      // İlk ikon ve başlığı
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(Icons.directions_car), // İlk ikon (araba)
+                          SizedBox(height: 4), // İkon ve başlık arasında boşluk
+                          Text('Araç:352016700333305'), // İkona ait başlık
+                        ],
+                      ),
+                      SizedBox(width: 20), // İkonlar arasında boşluk
+                      // İkinci ikon ve başlığı
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(Icons.vpn_key), // İkinci ikon (anahtar)
+                          SizedBox(height: 4), // İkon ve başlık arasında boşluk
+                          Text('İlk Kontak: ------'), // İkona ait başlık
+                        ],
+                      ),
+                      Spacer(), // İkonlar ile hız bilgisini ayırmak için
+                      // Hız bilgisi
+                      Text('Hız: $hiz km/s'),
+                    ],
+                  ),
                 ),
               ),
             ),
